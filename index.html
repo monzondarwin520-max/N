@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FF SENS PRO - Generador de Sensibilidad</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script type="text/babel">
+        const { useState } = React;
+        const { Crosshair, Smartphone, Gamepad2, Target, Skull } = lucide;
+
+        const FFSensGenerator = () => {
+          const [brand, setBrand] = useState('');
+          const [model, setModel] = useState('');
+          const [sensType, setSensType] = useState('');
+          const [sensConfig, setSensConfig] = useState(null);
+
+          const devices = {
+            iPhone: [
+              'iPhone 17 Pro Max', 'iPhone 17 Pro', 'iPhone 17 Plus', 'iPhone 17',
+              'iPhone 16 Pro Max', 'iPhone 16 Pro', 'iPhone 16 Plus', 'iPhone 16',
+              'iPhone 15 Pro Max', 'iPhone 15 Pro', 'iPhone 15 Plus', 'iPhone 15',
+              'iPhone 14 Pro Max', 'iPhone 14 Pro', 'iPhone 14 Plus', 'iPhone 14',
+              'iPhone 13 Pro Max', 'iPhone 13 Pro', 'iPhone 13 Mini', 'iPhone 13',
+              'iPhone 12 Pro Max', 'iPhone 12 Pro', 'iPhone 12 Mini', 'iPhone 12',
+              'iPhone 11 Pro Max', 'iPhone 11 Pro', 'iPhone 11',
+              'iPhone SE (2022)', 'iPhone SE (2020)',
+              'iPhone XS Max', 'iPhone XS', 'iPhone XR'
+            ],
+            Samsung: [
+              'Galaxy S25 Ultra', 'Galaxy S25+', 'Galaxy S25',
+              'Galaxy S24 Ultra', 'Galaxy S24+', 'Galaxy S24', 'Galaxy S24 FE',
+              'Galaxy S23 Ultra', 'Galaxy S23+', 'Galaxy S23', 'Galaxy S23 FE',
+              'Galaxy S22 Ultra', 'Galaxy S22+', 'Galaxy S22',
+              'Galaxy S21 Ultra', 'Galaxy S21+', 'Galaxy S21', 'Galaxy S21 FE',
+              'Galaxy S20 Ultra', 'Galaxy S20+', 'Galaxy S20', 'Galaxy S20 FE',
+              'Galaxy Z Fold 7', 'Galaxy Z Fold 6', 'Galaxy Z Fold 5', 'Galaxy Z Fold 4', 'Galaxy Z Fold 3',
+              'Galaxy Z Flip 6', 'Galaxy Z Flip 5', 'Galaxy Z Flip 4', 'Galaxy Z Flip 3',
+              'Galaxy A55', 'Galaxy A54', 'Galaxy A53', 'Galaxy A52',
+              'Galaxy A35', 'Galaxy A34', 'Galaxy A33',
+              'Galaxy A25', 'Galaxy A24', 'Galaxy A23',
+              'Galaxy A15', 'Galaxy A14', 'Galaxy A13'
+            ],
+            Xiaomi: [
+              'Xiaomi 16 Ultra', 'Xiaomi 16 Pro', 'Xiaomi 16',
+              'Xiaomi 15 Ultra', 'Xiaomi 15 Pro', 'Xiaomi 15',
+              'Xiaomi 14 Ultra', 'Xiaomi 14 Pro', 'Xiaomi 14', 'Xiaomi 14T Pro',
+              'Xiaomi 13 Ultra', 'Xiaomi 13 Pro', 'Xiaomi 13', 'Xiaomi 13T Pro',
+              'Xiaomi 12 Pro', 'Xiaomi 12', 'Xiaomi 11T Pro',
+              'Redmi Note 14 Pro+', 'Redmi Note 14 Pro', 'Redmi Note 14',
+              'Redmi Note 13 Pro+', 'Redmi Note 13 Pro', 'Redmi Note 13',
+              'Redmi Note 12 Pro+', 'Redmi Note 12 Pro', 'Redmi Note 12',
+              'Redmi Note 11 Pro', 'Redmi Note 11', 'Redmi Note 10 Pro',
+              'POCO F6 Pro', 'POCO F6', 'POCO F5 Pro', 'POCO F5',
+              'POCO X7 Pro', 'POCO X6 Pro', 'POCO X6', 'POCO X5 Pro',
+              'POCO M6 Pro', 'POCO M5 Pro', 'POCO C65',
+              'Redmi K70 Ultra', 'Redmi K70 Pro', 'Redmi K70', 'Redmi K60 Pro'
+            ],
+            Realme: [
+              'Realme GT 7 Pro', 'Realme GT 6 Pro', 'Realme GT 6',
+              'Realme GT Neo 6', 'Realme GT Neo 5', 'Realme GT 5 Pro',
+              'Realme 13 Pro+', 'Realme 13 Pro', 'Realme 13',
+              'Realme 12 Pro+', 'Realme 12 Pro', 'Realme 12',
+              'Realme 11 Pro+', 'Realme 11 Pro', 'Realme 11',
+              'Realme Narzo 70 Pro', 'Realme Narzo 70', 'Realme Narzo 60 Pro',
+              'Realme C67', 'Realme C65', 'Realme C55', 'Realme C53',
+              'Realme V50', 'Realme V40'
+            ],
+            OnePlus: [
+              'OnePlus 13 Pro', 'OnePlus 13', 'OnePlus 13R',
+              'OnePlus 12 Pro', 'OnePlus 12', 'OnePlus 12R',
+              'OnePlus 11', 'OnePlus 11R', 'OnePlus 10 Pro', 'OnePlus 10T',
+              'OnePlus Open 2', 'OnePlus Open',
+              'OnePlus Nord 4', 'OnePlus Nord CE 4', 'OnePlus Nord CE 3',
+              'OnePlus Nord 3', 'OnePlus Nord 2T',
+              'OnePlus Ace 3 Pro', 'OnePlus Ace 3'
+            ],
+            Oppo: [
+              'Oppo Find X9 Ultra', 'Oppo Find X9 Pro', 'Oppo Find X9',
+              'Oppo Find X8 Ultra', 'Oppo Find X7 Ultra', 'Oppo Find X7',
+              'Oppo Find X6 Pro', 'Oppo Find X6', 'Oppo Find N5', 'Oppo Find N3',
+              'Oppo Reno 13 Pro', 'Oppo Reno 12 Pro', 'Oppo Reno 12',
+              'Oppo Reno 11 Pro', 'Oppo Reno 11', 'Oppo Reno 10 Pro+',
+              'Oppo Reno 10 Pro', 'Oppo Reno 10', 'Oppo Reno 8 Pro',
+              'Oppo A79', 'Oppo A78', 'Oppo A60', 'Oppo A58'
+            ],
+            Vivo: [
+              'Vivo X200 Ultra', 'Vivo X200 Pro', 'Vivo X200',
+              'Vivo X100 Ultra', 'Vivo X100 Pro', 'Vivo X100',
+              'Vivo X90 Pro', 'Vivo X90',
+              'Vivo V30 Pro', 'Vivo V30', 'Vivo V29 Pro', 'Vivo V29',
+              'Vivo V27 Pro', 'Vivo V27', 'Vivo V25 Pro',
+              'Vivo Y100', 'Vivo Y78', 'Vivo Y56', 'Vivo Y36', 'Vivo Y28',
+              'Vivo T3 Pro', 'Vivo T3', 'Vivo T2 Pro', 'Vivo S18 Pro'
+            ],
+            Motorola: [
+              'Motorola Edge 60 Ultra', 'Motorola Edge 60 Pro',
+              'Motorola Edge 50 Ultra', 'Motorola Edge 50 Pro', 'Motorola Edge 50 Fusion',
+              'Motorola Edge 40 Ultra', 'Motorola Edge 40 Pro', 'Motorola Edge 40 Neo',
+              'Motorola Razr 50 Ultra', 'Motorola Razr 50', 'Motorola Razr 40 Ultra',
+              'Motorola Moto G Power 5G (2024)', 'Motorola Moto G Stylus 5G',
+              'Motorola Moto G85', 'Motorola Moto G84', 'Motorola Moto G73',
+              'Motorola Moto G54', 'Motorola Moto G34', 'Motorola Moto G24'
+            ],
+            Google: [
+              'Google Pixel 10 Pro XL', 'Google Pixel 10 Pro', 'Google Pixel 10',
+              'Google Pixel 9 Pro XL', 'Google Pixel 9 Pro', 'Google Pixel 9',
+              'Google Pixel 9 Pro Fold', 'Google Pixel Fold 2', 'Google Pixel 9a',
+              'Google Pixel 8 Pro', 'Google Pixel 8', 'Google Pixel 8a',
+              'Google Pixel 7 Pro', 'Google Pixel 7', 'Google Pixel 7a',
+              'Google Pixel 6 Pro', 'Google Pixel 6'
+            ],
+            Honor: [
+              'Honor Magic 7 Ultra', 'Honor Magic 7 Pro', 'Honor Magic 7',
+              'Honor Magic 6 Pro', 'Honor Magic 6', 'Honor Magic V5',
+              'Honor Magic 5 Pro', 'Honor Magic 5',
+              'Honor 200 Pro', 'Honor 200', 'Honor 100 Pro', 'Honor 100',
+              'Honor 90 Pro', 'Honor 90', 'Honor X9b', 'Honor X9a',
+              'Honor X8b', 'Honor X7b'
+            ],
+            Huawei: [
+              'Huawei Mate 70 Ultra', 'Huawei Mate 70 Pro', 'Huawei Mate 70',
+              'Huawei Mate 60 Pro+', 'Huawei Mate 60 Pro', 'Huawei Mate 60',
+              'Huawei Mate X7', 'Huawei Mate X6', 'Huawei Mate X5',
+              'Huawei P60 Pro', 'Huawei P60', 'Huawei P50 Pro',
+              'Huawei Nova 12 Pro', 'Huawei Nova 12', 'Huawei Nova 11 Pro'
+            ],
+            Asus: [
+              'Asus ROG Phone 9 Pro', 'Asus ROG Phone 9',
+              'Asus ROG Phone 8 Pro', 'Asus ROG Phone 8',
+              'Asus ROG Phone 7 Ultimate', 'Asus ROG Phone 7',
+              'Asus ROG Phone 6 Pro', 'Asus Zenfone 11 Ultra',
+              'Asus Zenfone 10', 'Asus Zenfone 9'
+            ],
+            Nothing: [
+              'Nothing Phone (3)', 'Nothing Phone (2a) Plus',
+              'Nothing Phone (2a) Pro', 'Nothing Phone (2a)',
+              'Nothing Phone (2)', 'Nothing Phone (1)'
+            ],
+            Sony: [
+              'Sony Xperia 1 VI', 'Sony Xperia 1 V',
+              'Sony Xperia 5 VI', 'Sony Xperia 5 V',
+              'Sony Xperia 10 VI', 'Sony Xperia 10 V'
+            ],
+            Infinix: [
+              'Infinix GT 20 Pro', 'Infinix GT 10 Pro',
+              'Infinix Note 40 Pro+', 'Infinix Note 40 Pro', 'Infinix Note 40',
+              'Infinix Note 30 Pro', 'Infinix Zero 30',
+              'Infinix Hot 50 Pro', 'Infinix Hot 40 Pro', 'Infinix Smart 8 Pro'
+            ],
+            Tecno: [
+              'Tecno Phantom X2 Pro', 'Tecno Phantom V Fold', 'Tecno Phantom V Flip',
+              'Tecno Camon 30 Pro', 'Tecno Camon 20 Pro',
+              'Tecno Pova 6 Pro', 'Tecno Spark 20 Pro', 'Tecno Spark 20'
+            ]
+          };
+
+          const generateSensitivity = () => {
+            let general, redDot, x2, x4, x8, buttonSize;
+            let style, description, color, tip;
+
+            if (sensType === 'baja') {
+              general = Math.floor(50 + Math.random() * 50);
+              redDot = Math.floor(general * 0.65);
+              x2 = Math.floor(general * 0.52);
+              x4 = Math.floor(general * 0.38);
+              x8 = Math.floor(general * 0.28);
+              buttonSize = Math.floor(45 + Math.random() * 20);
+              style = 'Precisión Total';
+              description = '✓ Control absoluto para HEADSHOTS a distancia';
+              color = 'from-blue-600 to-cyan-600';
+              tip = '💡 Tip: Apunta al pecho, el recoil sube a la cabeza';
+            } else if (sensType === 'media') {
+              general = Math.floor(120 + Math.random() * 50);
+              redDot = Math.floor(general * 0.62);
+              x2 = Math.floor(general * 0.50);
+              x4 = Math.floor(general * 0.36);
+              x8 = Math.floor(general * 0.26);
+              buttonSize = Math.floor(50 + Math.random() * 20);
+              style = 'Balance Pro';
+              description = '✓ Equilibrio perfecto para HEADSHOTS en todo momento';
+              color = 'from-green-600 to-emerald-600';
+              tip = '💡 Tip: Config universal, funciona con cualquier arma';
+            } else if (sensType === 'alta') {
+              general = Math.floor(170 + Math.random() * 30);
+              redDot = Math.floor(general * 0.58);
+              x2 = Math.floor(general * 0.47);
+              x4 = Math.floor(general * 0.34);
+              x8 = Math.floor(general * 0.24);
+              buttonSize = Math.floor(45 + Math.random() * 18);
+              style = 'Velocidad Letal';
+              description = '✓ Rushea rápido pegando HEADSHOTS de cerca';
+              color = 'from-red-600 to-orange-600';
+              tip = '💡 Tip: Para combate cercano, apunta directo a la cara';
+            } else if (sensType === 'headshot') {
+              general = Math.floor(135 + Math.random() * 25);
+              redDot = Math.floor(general * 0.55);
+              x2 = Math.floor(general * 0.44);
+              x4 = Math.floor(general * 0.30);
+              x8 = Math.floor(general * 0.22);
+              buttonSize = Math.floor(48 + Math.random() * 15);
+              style = 'HEADSHOT ONLY';
+              description = '✓ MÁXIMA PRECISIÓN - Solo para pegar en la cabeza';
+              color = 'from-purple-600 to-pink-600';
+              tip = '💡 Tip PRO: Con esta config, SIEMPRE apuntas a la cabeza primero';
+            }
+
+            setSensConfig({
+              general,
+              redDot,
+              x2,
+              x4,
+              x8,
+              buttonSize,
+              dpi: Math.random() > 0.5,
+              style,
+              description,
+              color,
+              tip,
+              tested: true
+            });
+          };
+
+          return React.createElement('div', { className: 'min-h-screen bg-gradient-to-br from-gray-900 via-orange-900 to-black p-4' },
+            React.createElement('div', { className: 'max-w-2xl mx-auto' },
+              React.createElement('div', { className: 'text-center mb-8 pt-6' },
+                React.createElement('div', { className: 'flex items-center justify-center gap-3 mb-3' },
+                  React.createElement(Crosshair, { className: 'w-10 h-10 text-yellow-400' }),
+                  React.createElement('h1', { className: 'text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-orange-500 to-red-600' }, 'FF SENS PRO')
+                ),
+                React.createElement('p', { className: 'text-yellow-400 text-sm font-semibold' }, '💀 Optimizado para HEADSHOTS 💀')
+              ),
+              React.createElement('div', { className: 'bg-gray-800/50 backdrop-blur border-2 border-yellow-500 rounded-lg p-4 mb-4' },
+                React.createElement('label', { className: 'block text-yellow-400 font-bold mb-2' }, '📱 Selecciona la marca'),
+                React.createElement('select', {
+                  value: brand,
+                  onChange: (e) => {
+                    setBrand(e.target.value);
+                    setModel('');
+                    setSensType('');
+                    setSensConfig(null);
+                  },
+                  className: 'w-full bg-gray-900 text-white border-2 border-yellow-600 rounded-lg p-3'
+                },
+                  React.createElement('option', { value: '' }, '-- Elige tu marca --'),
+                  Object.keys(devices).map(b => React.createElement('option', { key: b, value: b }, b))
+                )
+              ),
+              brand && React.createElement('div', { className: 'bg-gray-800/50 backdrop-blur border-2 border-yellow-500 rounded-lg p-4 mb-4' },
+                React.createElement('label', { className: 'block text-yellow-400 font-bold mb-2' }, '🎮 Selecciona el modelo'),
+                React.createElement('select', {
+                  value: model,
+                  onChange: (e) => {
+                    setModel(e.target.value);
+                    setSensType('');
+                    setSensConfig(null);
+                  },
+                  className: 'w-full bg-gray-900 text-white border-2 border-yellow-600 rounded-lg p-3'
+                },
+                  React.createElement('option', { value: '' }, '-- Elige tu modelo --'),
+                  devices[brand].map(m => React.createElement('option', { key: m, value: m }, m))
+                )
+              ),
+              model && React.createElement('div', { className: 'bg-gray-800/50 backdrop-blur border-2 border-yellow-500 rounded-lg p-4 mb-4' },
+                React.createElement('label', { className: 'block text-yellow-400 font-bold mb-2' }, '🎯 Tipo de Sensibilidad'),
+                React.createElement('select', {
+                  value: sensType,
+                  onChange: (e) => {
+                    setSensType(e.target.value);
+                    setSensConfig(null);
+                  },
+                  className: 'w-full bg-gray-900 text-white border-2 border-yellow-600 rounded-lg p-3'
+                },
+                  React.createElement('option', { value: '' }, '-- Elige el tipo --'),
+                  React.createElement('option', { value: 'baja' }, '🎯 BAJA (50-100) - Precisión Total'),
+                  React.createElement('option', { value: 'media' }, '⚖️ MEDIA (120-170) - Balance Pro'),
+                  React.createElement('option', { value: 'alta' }, '🔥 ALTA (170-200) - Velocidad Letal'),
+                  React.createElement('option', { value: 'headshot' }, '💀 HEADSHOT ONLY - Máxima Precisión')
+                )
+              ),
+              model && sensType && sensConfig && React.createElement('div', { className: 'bg-gradient-to-br from-gray-900 to-gray-800 border-2 border-yellow-500 rounded-lg p-5 mb-4' },
+                React.createElement('div', { className: 'mb-4 p-3 bg-gradient-to-r from-green-900/50 to-emerald-900/50 border-2 border-green-500 rounded-lg' },
+                  React.createElement('p', { className: 'text-green-300 text-sm font-bold text-center' }, sensConfig.description),
+                  React.createElement('p', { className: 'text-yellow-300 text-xs text-center mt-2' }, sensConfig.tip)
+                ),
+                React.createElement('div', { className: 'space-y-2 text-white font-mono bg-black/30 p-4 rounded' },
+                  React.createElement('div', { className: 'flex justify-between border-b border-gray-700 pb-2' },
+                    React.createElement('span', { className: 'text-yellow-400' }, 'Sensibilidad General:'),
+                    React.createElement('span', { className: 'font-bold text-green-400' }, sensConfig.general)
+                  ),
+                  React.createElement('div', { className: 'flex justify-between border-b border-gray-700 pb-2' },
+                    React.createElement('span', { className: 'text-yellow-400' }, 'Mira de Punto Rojo:'),
+                    React.createElement('span', { className: 'font-bold text-green-400' }, sensConfig.redDot)
+                  ),
+                  React.createElement('div', { className: 'flex justify-between border-b border-gray-700 pb-2' },
+                    React.createElement('span', { className: 'text-yellow-400' }, 'Mira X2:'),
+                    React.createElement('span', { className: 'font-bold text-green-400' }, sensConfig.x2)
+                  ),
+                  React.createElement('div', { className: 'flex justify-between border-b border-gray-700 pb-2' },
+                    React.createElement('span', { className: 'text-yellow-400' }, 'Mira X4:'),
+                    React.createElement('span', { className: 'font-bold text-green-400' }, sensConfig.x4)
+                  ),
+                  React.createElement('div', { className: 'flex justify-between border-b border-gray-700 pb-2' },
+                    React.createElement('span', { className: 'text-yellow-400' }, 'Mira X8:'),
+                    React.createElement('span', { className: 'font-bold text-cyan-400' }, sensConfig.x8)
+                  ),
+                  React.createElement('div', { className: 'flex justify-between border-b border-gray-700 pb-2' },
+                    React.createElement('span', { className: 'text-yellow-400' }, 'Tamaño del Botón:'),
+                    React.createElement('span', { className: 'font-bold text-green-400' }, sensConfig.buttonSize)
+                  ),
+                  React.createElement('div', { className: 'flex justify-between' },
+                    React.createElement('span', { className: 'text-yellow-400' }, 'DPI:'),
+                    React.createElement('span', { className: 'font-bold text-purple-400' }, sensConfig.dpi ? 'Con DPI' : 'Sin DPI')
+                  )
+                )
+              ),
+              model && sensType && React.createElement('div', { className: 'space-y-3' },
+                React.createElement('button', {
+                  onClick: generateSensitivity,
+                  className: 'w-full bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 text-yellow-300 font-bold py-4 px-6 rounded-lg border-2 border-yellow-500 shadow-lg'
+                }, '🎯 Generar con DPI'),
+                React.createElement('button', {
+                  onClick: () => {
+                    generateSensitivity();
+                    setSensConfig(prev => prev ? {...prev, dpi: false} : null);
+                  },
+                  className: 'w-full bg-gradient-to-r from-orange-600 to-red-700 hover:from-orange-700 hover:to-red-800 text-yellow-300 font-bold py-4 px-6 rounded-lg border-2 border-yellow-500 shadow-lg'
+                }, '🔥 Generar sin DPI')
+              )
+            )
+          );
+        };
+
+        ReactDOM.render(React.createElement(FFSensGenerator), document.getElementById('root'));
+    </script>
+</body>
+</html>
